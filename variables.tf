@@ -1,9 +1,3 @@
-variable "env" {
-  type = "string"
-  description = "Environment name. Used as prefix in resources naming."
-  default = "dev"
-}
-
 variable "region" {
   type = "string"
   default = "us-west2"
@@ -20,4 +14,19 @@ variable "app_url_regexp" {
   type = "string"
   default = "/.*"
   description = "App Engine regexp url"
+}
+
+variable "project" {
+  type = "string"
+  description = "GCP Project to deploy to"
+}
+
+variable "admin_service_accounts" {
+  type = "list"
+  default = []
+}
+
+variable "admin_users" {
+  type = "list"
+  default = []
 }

@@ -2,23 +2,22 @@
 # IAM resources (service accounts, bindings etc)
 #
 
-# Service account to tuse with App Engine to run application
-resource "google_service_account" "appengine" {
-  account_id = "${var.env}-appengine"
-  display_name = "AppEngine for ${var.env} environment"
-}
-
-# IAM bindings
-resource "google_storage_bucket_iam_policy" "appangine" {
+resource "google_storage_bucket_iam_member" "appengine_svcacc_app_bucket_viewer" {
   bucket = google_storage_bucket.app.name
-  policy_data = data.google_iam_policy.appengine.policy_data
+  member = "serviceAccount:${data.google_project.project.project_id}@appspot.gserviceaccount.com"
+  role = "roles/storage.objectViewer"
 }
 
-# Policy prvides appengine service account running app
-# readonly privileges to the bucket contents
-data "google_iam_policy" "appengine" {
-  binding {
-    members = [google_service_account.appengine.email]
-    role = "roles/storage.objectViewer"
-  }
+resource "google_storage_bucket_iam_member" "custom_svcacc_app_bucket_admin" {
+  count = length(var.admin_service_accounts)
+  bucket = google_storage_bucket.app.name
+  member = "serviceAccount:${var.admin_service_accounts[count.index]}"
+  role = "roles/storage.admin"
+}
+
+resource "google_storage_bucket_iam_member" "custom_user_app_bucket_admin" {
+  count = length(var.admin_users)
+  bucket = google_storage_bucket.app.name
+  member = "user:${var.admin_users[count.index]}"
+  role = "roles/storage.admin"
 }
