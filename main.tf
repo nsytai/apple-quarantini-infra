@@ -16,3 +16,8 @@ resource "null_resource" "upload_dummyapp" {
     command = "gsutil cp ${local.dummyapp_zip_name} gs://${google_storage_bucket.app.name}/${local.dummyapp_zip_name}"
   }
 }
+
+resource "google_project_service" "project_services" {
+  count = length(var.project_services)
+  service = var.project_services[count.index]
+}
